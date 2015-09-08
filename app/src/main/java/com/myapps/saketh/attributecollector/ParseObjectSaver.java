@@ -99,7 +99,6 @@ public class ParseObjectSaver extends Service {
                             }
                             Log.d("LOL", "Done : "+it.hasNext());
                         }
-//                        Toast.makeText(getApplicationContext(), "Upload Done!", Toast.LENGTH_SHORT).show();
                     }
                 }
         );
