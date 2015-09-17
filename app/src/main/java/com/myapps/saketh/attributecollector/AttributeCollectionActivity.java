@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -17,6 +18,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class AttributeCollectionActivity extends AppCompatActivity {
@@ -39,12 +42,13 @@ public class AttributeCollectionActivity extends AppCompatActivity {
     ArrayAdapter<String> activityL2Adatpter;
     TextView txtActivity;
 
+    Intent dataCollIntent;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_attribute_collection);
-
-        intent = new Intent(this, DataCollector.class);
+        dataCollIntent = new Intent(this, DataCollector.class);
         this.prefs = PreferenceManager.getDefaultSharedPreferences(this);
         editor = this.prefs.edit();
 
@@ -94,28 +98,45 @@ public class AttributeCollectionActivity extends AppCompatActivity {
                         String activity = parent.getItemAtPosition(position).toString();
                         txtActivity.setText(activity);
                         Constants.activity = activity;
+                        Intent intent = new Intent("Activity");
+                        Bundle bundle = new Bundle();
+                        bundle.putString("Activity", activity);
+                        intent.putExtras(bundle);
+                        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
                     }
                 }
         );
+
+        final TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                startService(dataCollIntent);
+                btnUpload.setText("Stop Collection");
+            }
+        };
 
         btnUpload.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if(!uploadClicked) {
-                            btnUpload.setText("Uploading");
+                        if(btnUpload.getText().equals("Stop Collection")) {
                             Toast.makeText(getApplicationContext(), "Collection Stopped", Toast.LENGTH_SHORT).show();
-                            stopService(intent);
-                            //                        Intent intentParse = new Intent(getApplicationContext(), ParseUploadActivity.class);
-                            Intent intentParse = new Intent(getApplicationContext(), ParseObjectSaver.class);
-                            //                        startActivity(intentParse);
-                            startService(intentParse);
-                            uploadClicked = true;
+                            stopService(dataCollIntent);
+                            btnUpload.setText("Start Collection");
+                            startActivity(new Intent(getApplicationContext(), ParseUploadActivity.class));
                         }
-                        btnUpload.setBackgroundColor(Color.CYAN);
-                        btnUpload.setEnabled(false);
+                        else if(btnUpload.getText().equals("Start Collection")){
+                            Timer timer = new Timer();
+                            timer.schedule(timerTask, (long) Math.pow(10, 10));
+                        }
                     }
                 }
         );
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        btnUpload.setText("Start Collection");
     }
 }

@@ -13,9 +13,6 @@ public class Attribute_Coll extends AppCompatActivity {
     Button btnFollower;
     Intent grpLdrIntent;
     Intent followerIntent;
-    AdminLogin grpLeaderLoginPage;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,6 +20,9 @@ public class Attribute_Coll extends AppCompatActivity {
         setContentView(R.layout.activity_attribute_coll);
 
         btnGrpLdr = (Button) findViewById(R.id.btnGrpLdr);
+
+        btnGrpLdr.setVisibility(View.INVISIBLE);
+
         btnFollower = (Button) findViewById(R.id.btnFollower);
         grpLdrIntent = new Intent(this, AdminLogin.class);
         followerIntent = new Intent(this, FollowerActivity.class);

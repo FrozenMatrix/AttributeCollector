@@ -1,16 +1,20 @@
 package com.myapps.saketh.attributecollector;
 
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.os.Environment;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.preference.PreferenceManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -37,6 +41,9 @@ public class DataCollector extends Service {
     File attributeFile;
     SharedPreferences prefs;
 
+    Handler mHandler;
+    BroadcastReceiver broadcastReceiver;
+
     String activity;
 
     @Override
@@ -55,11 +62,29 @@ public class DataCollector extends Service {
         if(mag == null)
             Log.d("MAG", "NULL");
         senseVals = new double[13];
-        String filePath = Environment.DIRECTORY_DOCUMENTS+"\\attribute.csv";
         attributeFile = new File("sdcard/attribute.csv");
         Constants.AttributeFilePath = attributeFile.getPath();
         activity = "Unknown";
 
+        mHandler = new Handler(){
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                activity = msg.getData().getString("Activity");
+                Constants.activity = activity;
+            }
+        };
+
+        broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Message msg = new Message();
+                msg.setData(intent.getExtras());
+                mHandler.sendMessage(msg);
+            }
+        };
+
+        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(broadcastReceiver, new IntentFilter("Activity"));
         try {
             csvWriter = new CSVWriter(new FileWriter(attributeFile, true), ',');
             csvWriter.writeNext(Constants.Headers);
@@ -132,7 +157,6 @@ public class DataCollector extends Service {
                     senseVals[12] = event.values[2];
                     state = 4;
                 }
-                activity = Constants.activity;
                 writeToFile();
             }
 

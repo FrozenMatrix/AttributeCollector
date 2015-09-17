@@ -1,0 +1,65 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context="com.myapps.saketh.attributecollector.AttributeCollectionActivity">
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Stop Collection"
+        android:id="@+id/btnStopUpload"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:id="@+id/rdBtnGrp"
+        android:weightSum="1"
+        android:layout_above="@+id/listActivity"
+        android:layout_alignParentStart="true">
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="Layer1"
+            android:id="@+id/rdBtnLayer1"
+            android:layout_below="@+id/btnStopUpload"
+            android:layout_centerHorizontal="true"/>
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="Layer2"
+            android:id="@+id/rdBtnLayer2"
+            android:layout_below="@+id/btnStopUpload"
+            android:layout_centerHorizontal="true" />
+    </RadioGroup>
+
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="150dp"
+        android:id="@+id/listActivity"
+        android:layout_centerVertical="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignEnd="@+id/rdBtnGrp"
+        tools:listitem="@android:layout/simple_list_item_single_choice"
+        android:choiceMode="singleChoice" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Not Selected"
+        android:id="@+id/txtActivity"
+        android:layout_marginBottom="69dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+
+</RelativeLayout>

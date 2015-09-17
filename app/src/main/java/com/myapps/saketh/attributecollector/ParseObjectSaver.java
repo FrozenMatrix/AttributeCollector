@@ -2,7 +2,9 @@ package com.myapps.saketh.attributecollector;
 
 import android.app.Service;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.IBinder;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.opencsv.CSVIterator;
@@ -23,6 +25,7 @@ public class ParseObjectSaver extends Service {
     CSVIterator ite;
     int lineNum = 0;
     int Total = 0;
+    int count = 0;
     public ParseObjectSaver() {
 
     }
@@ -92,8 +95,16 @@ public class ParseObjectSaver extends Service {
                         while(it.hasNext())
                         {
                             try {
-                                Log.d("LOL", "Adding");
+                                ++count;
+                                Log.d("LOL", "Size : "+parseObjects.size()+" count : "+count);
                                 it.next().saveInBackground().waitForCompletion();
+                                Intent broadcastIntent = new Intent("Progress-Intent");
+                                Bundle bundle = new Bundle();
+                                int progress = (int)((float)(count*100)/(float)parseObjects.size());
+                                Log.d("LOL","PROGRESS : "+ progress);
+                                bundle.putInt("Progress", progress);
+                                broadcastIntent.putExtras(bundle);
+                                LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(broadcastIntent);
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
